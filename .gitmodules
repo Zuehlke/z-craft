@@ -1,0 +1,3 @@
+[submodule "coding-dojos/GildedRose-Refactoring"]
+	path = coding-dojos/GildedRose-Refactoring
+	url = https://github.com/emilybache/GildedRose-Refactoring-Kata.git

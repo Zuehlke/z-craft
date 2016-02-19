@@ -1,3 +1,6 @@
 [submodule "coding-dojos/GildedRose-Refactoring"]
 	path = coding-dojos/GildedRose-Refactoring
 	url = https://github.com/emilybache/GildedRose-Refactoring-Kata.git
+[submodule "coding-dojos/TDD-Katas"]
+	path = coding-dojos/TDD-Katas
+	url = https://github.com/garora/TDD-Katas.git

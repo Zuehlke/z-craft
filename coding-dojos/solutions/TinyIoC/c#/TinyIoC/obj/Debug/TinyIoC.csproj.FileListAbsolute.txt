@@ -1,0 +1,5 @@
+C:\Projects\DummyTests\Dojo\TinyIoC\TinyIoC\bin\Debug\TinyIoC.dll
+C:\Projects\DummyTests\Dojo\TinyIoC\TinyIoC\bin\Debug\TinyIoC.pdb
+C:\Projects\DummyTests\Dojo\TinyIoC\TinyIoC\obj\Debug\TinyIoC.csprojResolveAssemblyReference.cache
+C:\Projects\DummyTests\Dojo\TinyIoC\TinyIoC\obj\Debug\TinyIoC.dll
+C:\Projects\DummyTests\Dojo\TinyIoC\TinyIoC\obj\Debug\TinyIoC.pdb

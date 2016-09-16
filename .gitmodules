@@ -4,3 +4,6 @@
 [submodule "coding-dojos/TDD-Katas"]
 	path = coding-dojos/TDD-Katas
 	url = https://github.com/garora/TDD-Katas.git
+[submodule "coding-dojos/handouts/embedded"]
+	path = coding-dojos/handouts/embedded
+	url = https://bitbucket.zuehlke.com/scm/~pif/embedded-dojos.git

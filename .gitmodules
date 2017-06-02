@@ -7,3 +7,6 @@
 [submodule "coding-dojos/handouts/embedded"]
 	path = coding-dojos/handouts/embedded
 	url = https://bitbucket.zuehlke.com/scm/~pif/embedded-dojos.git
+[submodule "coding-dojos/CompletableFuture"]
+	path = coding-dojos/CompletableFuture
+	url = https://github.com/brazzy/meetup_compFuture

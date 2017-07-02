@@ -1,14 +1,12 @@
 package test.jbehave;
 
-import static test.jbehave.VendingMachineUtils.assertedCoinReturn;
-import static test.jbehave.VendingMachineUtils.cashBoxHelper;
-import static test.jbehave.VendingMachineUtils.coinHelper;
 import static test.jbehave.VendingMachineUtils.defaultCashBox;
 import static test.jbehave.VendingMachineUtils.defaultInventory;
-import static test.jbehave.VendingMachineUtils.inventoryHelper;
-import static test.jbehave.VendingMachineUtils.productHelper;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
@@ -22,6 +20,44 @@ import main.VendingMachine;
 
 public class VendingMachineStep {
 	private VendingMachine machine;
+	
+	private boolean assertedCoinReturn(VendingMachine machine, int asserted) {
+		List<Coin> returnedCoins = machine.getCoinReturn();
+		int value = 0;
+
+		for (Iterator<Coin> iterator = returnedCoins.iterator(); iterator.hasNext();) {
+			Coin coin = (Coin) iterator.next();
+			value += coin.getValue();
+		}
+
+		return asserted == value;
+	}
+	
+	private List<Product> inventory(ExamplesTable table) {
+		List<Product> products = new ArrayList<Product>();
+		for (Map<String, String> row : table.getRows()) {
+			int i = Integer.parseInt(row.get("amount"));
+
+			for (int j = 0; j < i; j++) {
+				Product product = Product.valueOf(row.get("productName").toUpperCase());
+				products.add(product);
+			}
+		}
+		return products;
+	}
+	
+	private List<Coin> cashBox(ExamplesTable table) {
+		List<Coin> coins = new ArrayList<Coin>();
+		for (Map<String, String> row : table.getRows()) {
+			int i = Integer.parseInt(row.get("amount"));
+
+			for (int j = 0; j < i; j++) {
+				Coin coin = Coin.valueOf(row.get("coinName").toUpperCase());
+				coins.add(coin);
+			}
+		}
+		return coins;
+	}
 
 	@Given("a vending machine")
 	public void initMachine() {
@@ -33,17 +69,17 @@ public class VendingMachineStep {
 
 	@When("the given inventory is $productList")
 	public void setInventory(ExamplesTable productList) {
-		machine.setInventory(inventoryHelper(productList));
+		machine.setInventory(inventory(productList));
 	}
 
 	@When("the given cashbox is $coinList")
 	public void setCashBox(ExamplesTable coinList) {
-		machine.setCashBox(cashBoxHelper(coinList));
+		machine.setCashBox(cashBox(coinList));
 	}
 
 	@When("the customer selects $productName")
 	public void selectProduct(String productName) {
-		Product product = productHelper(productName.toUpperCase());
+		Product product = Product.valueOf(productName.toUpperCase());
 		machine.selectProduct(product);
 	}
 
@@ -54,7 +90,7 @@ public class VendingMachineStep {
 
 	@When("the customer inserts a $coinName")
 	public void insertCoin(String coinName) {
-		Coin coin = coinHelper(coinName.toUpperCase());
+		Coin coin = Coin.valueOf(coinName.toUpperCase());
 		machine.accept(coin);
 	}
 
@@ -68,14 +104,14 @@ public class VendingMachineStep {
 		List<Coin> coinReturn = machine.getCoinReturn();
 
 		for (String coinName : coinNameList) {
-			Coin coin = coinHelper(coinName.toUpperCase());
+			Coin coin = Coin.valueOf(coinName.toUpperCase());
 			Assert.assertTrue(coinReturn.remove(coin));
 		}
 	}
 
 	@Then("the machine dispends $productName")
 	public void dispendProduct(String productName) {
-		Product product = productHelper(productName.toUpperCase());
+		Product product = Product.valueOf(productName.toUpperCase());
 		List<Product> productOutput = machine.getProductOutput();
 
 		Assert.assertNotNull(productOutput.contains(product));

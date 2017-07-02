@@ -37,7 +37,7 @@ public class VendingMachineTest {
 
 	@Test
 	public void acceptNickel(){
-		assertTrue(testee.accept(new Coin(5, 21.21, 5)));
+		assertTrue(testee.accept(Coin.NICKEL));
 		assertEquals(5, testee.getValue());
 		assertEquals("$0.05", testee.getDisplay());
 		assertEquals(Collections.emptyList(), testee.getCoinReturn());
@@ -45,7 +45,7 @@ public class VendingMachineTest {
 
 	@Test
 	public void acceptDime(){
-		assertTrue(testee.accept(new Coin(2.268, 17.91, 10)));
+		assertTrue(testee.accept(Coin.DIME));
 		assertEquals(10, testee.getValue());
 		assertEquals("$0.10", testee.getDisplay());
 		assertEquals(Collections.emptyList(), testee.getCoinReturn());
@@ -53,32 +53,25 @@ public class VendingMachineTest {
 
 	@Test
 	public void acceptQuarter(){
-		assertTrue(testee.accept(new Coin(5.67, 24.26, 25)));
+		assertTrue(testee.accept(Coin.QUARTER));
 		assertEquals(25, testee.getValue());
 		assertEquals("$0.25", testee.getDisplay());
 		assertEquals(Collections.emptyList(), testee.getCoinReturn());
 	}
 
 	@Test
-	public void rejectInvalidWeight(){
-		Coin coin = new Coin(6, 21.21, 0);
+	public void rejectInvalid(){
+		Coin coin = Coin.INVALID;
 		assertFalse(testee.accept(coin));			
 		assertEquals(0, testee.getValue());
 		assertEquals("INSERT COINS", testee.getDisplay());
 		assertEquals(Collections.singletonList(coin), testee.getCoinReturn());
 	}
 
-	@Test
-	public void rejectInvalidDiameter(){
-		Coin coin = new Coin(5.67, 24.25, 0);
-		assertFalse(testee.accept(coin));
-		assertEquals(0, testee.getValue());
-		assertEquals("INSERT COINS", testee.getDisplay());
-		assertEquals(Collections.singletonList(coin), testee.getCoinReturn());
-	}
+
 	@Test
 	public void getRejectedTwice(){
-		Coin coin = new Coin(5.67, 24.25, 0);
+		Coin coin = Coin.INVALID;
 		assertFalse(testee.accept(coin));
 		assertFalse(testee.accept(Coin.INVALID));
 		assertEquals(Arrays.asList(coin, Coin.INVALID), testee.getCoinReturn());

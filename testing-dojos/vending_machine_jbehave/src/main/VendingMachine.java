@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-
 public class VendingMachine {
 
 	private static final String PRICE = "PRICE: ";
@@ -18,13 +17,6 @@ public class VendingMachine {
 	private static final String THANKS = "THANK YOU";
 	private static final String SOLD_OUT = "SOLD OUT";
 	private static final String ERROR = "ERROR";
-	private static final Map<Coin, Integer> coinValues = new LinkedHashMap<>();
-	
-	static {
-		coinValues.put(Coin.QUARTER, 25);
-		coinValues.put(Coin.DIME, 10);
-		coinValues.put(Coin.NICKEL, 5);
-	}
 
 	private List<Coin> coinReturn = new ArrayList<>();
 	private List<Product> inventory = new ArrayList<Product>();
@@ -35,11 +27,10 @@ public class VendingMachine {
 	private Product selected;
 	private State state = State.INITIAL;
 
-
 	public void setInventory(List<Product> inventory) {
 		this.inventory = inventory;
 	}
-	
+
 	public List<Product> getInventory() {
 		return inventory;
 	}
@@ -51,19 +42,17 @@ public class VendingMachine {
 	private boolean exactChange() {
 		int nickles = Collections.frequency(cashBox, Coin.NICKEL);
 		int dimes = Collections.frequency(cashBox, Coin.DIME);
-		
-		// change only needed to return $0.05 and $0.10 
-		return (!((nickles >= 2) || (nickles >= 1 && dimes > 0))); 
+
+		// change only needed to return $0.05 and $0.10
+		return (!((nickles >= 2) || (nickles >= 1 && dimes > 0)));
 	}
 
 	public boolean accept(Coin coin) {
-		for (Coin candidate : Arrays.asList(Coin.NICKEL, Coin.DIME, Coin.QUARTER)) {
-			if (equalCoins(coin, candidate)) {
-				value += coinValues.get(candidate);
-				coinsReceived.add(coin);
-				state = State.MONEY;
-				return true;
-			}
+		if (coin.getValue() >= 5) {
+			value += coin.getValue();
+			coinsReceived.add(coin);
+			state = State.MONEY;
+			return true;
 		}
 		coinReturn.add(coin);
 		return false;
@@ -74,15 +63,14 @@ public class VendingMachine {
 	}
 
 	boolean equalCoins(Coin coin, Coin candidate) {
-		return Math.abs(candidate.getWeight() - coin.getWeight()) < 0.0001
-				&& Math.abs(candidate.getDiameter() - coin.getDiameter()) < 0.0001;
+		return coin.getValue() == candidate.getValue();
 	}
 
 	public int getValue() {
 		return value;
 	}
 
-	public String getDisplay() {	
+	public String getDisplay() {
 		switch (this.state) {
 		case INITIAL:
 			return exactChange() ? EXACT_CHANGE : INSERT;
@@ -116,7 +104,7 @@ public class VendingMachine {
 			this.state = State.SOLD_OUT;
 			return;
 		}
-		
+
 		if (p.getPrice() <= this.value) {
 			this.productOutput.add(p);
 			this.cashBox.addAll(coinsReceived);
@@ -131,13 +119,21 @@ public class VendingMachine {
 	}
 
 	private void returnChange(int change) {
-		for (Entry<Coin, Integer> entry : coinValues.entrySet()) {
-			while (change >= entry.getKey().getValue()) {
-				coinReturn.add(entry.getKey());
-				cashBox.remove(entry.getKey());
-				change -= entry.getValue();
+		List<Coin> changeCoins = new ArrayList<Coin>();
+
+		for (Coin coin : cashBox) {
+			if (change >= coin.getValue()) {
+				changeCoins.add(coin);
+				change -= coin.getValue();
+				
+				if (change == 0) 
+					break;
 			}
 		}
+
+		cashBox.removeAll(changeCoins);
+		coinReturn.addAll(changeCoins);
+
 	}
 
 	public List<Product> getProductOutput() {

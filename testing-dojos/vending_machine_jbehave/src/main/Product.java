@@ -1,4 +1,5 @@
 package main;
+
 public enum Product {
 	CHIPS(50), COLA(100), CANDY(65);
 	

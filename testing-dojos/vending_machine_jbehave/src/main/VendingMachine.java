@@ -2,12 +2,8 @@ package main;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class VendingMachine {
 
@@ -26,6 +22,7 @@ public class VendingMachine {
 	private List<Coin> coinsReceived = new ArrayList<>();
 	private Product selected;
 	private State state = State.INITIAL;
+	private final Coin[] validCoins = new Coin[] { Coin.QUARTER, Coin.DIME, Coin.NICKEL };
 
 	public void setInventory(List<Product> inventory) {
 		this.inventory = inventory;
@@ -98,6 +95,8 @@ public class VendingMachine {
 		return result;
 	}
 
+	// insert(25)*3 => 0.75; purchase(0.65), collect(0.75), return(10);
+
 	public void selectProduct(Product p) {
 		if (!inventory.contains(p)) {
 			this.selected = null;
@@ -107,33 +106,42 @@ public class VendingMachine {
 
 		if (p.getPrice() <= this.value) {
 			this.productOutput.add(p);
-			this.cashBox.addAll(coinsReceived);
-			this.coinsReceived.clear();
-			this.state = State.PURCHASE;
-			returnChange(this.value - p.getPrice());
+			int change = collectCoins(p.getPrice());
+			returnChange(change);
 			this.value = 0;
+			this.state = State.PURCHASE;
 		} else {
 			this.selected = p;
 			this.state = State.INSUFFICIENT;
 		}
 	}
 
-	private void returnChange(int change) {
-		List<Coin> changeCoins = new ArrayList<Coin>();
-
-		for (Coin coin : cashBox) {
-			if (change >= coin.getValue()) {
-				changeCoins.add(coin);
-				change -= coin.getValue();
-				
-				if (change == 0) 
-					break;
-			}
+	private int collectCoins(int value) {
+		while (value > 0) {
+			Coin coin = coinsReceived.remove(0);
+			cashBox.add(coin);
+			value -= coin.getValue();
 		}
 
-		cashBox.removeAll(changeCoins);
-		coinReturn.addAll(changeCoins);
+		// move rest of received coins to return
+		coinReturn.addAll(coinsReceived);
+		coinsReceived.clear();
 
+		// return change value
+		return -value;
+	}
+
+	private void returnChange(int change) {
+		while (change > 0) {
+			for (Coin coin : this.validCoins) {
+				if (change >= coin.getValue() && cashBox.remove(coin)) {
+					change -= coin.getValue();
+					coinReturn.add(coin);
+					break;
+				}
+			}
+
+		}
 	}
 
 	public List<Product> getProductOutput() {

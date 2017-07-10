@@ -21,7 +21,7 @@ Then the return tray contains Penny
 Then the display shows INSERT COINS
 When the customer inserts a Invalid
 Then the display shows INSERT COINS
-Then the return tray contains INVALID COIN
+Then the return tray contains Invalid
 Then the display shows INSERT COINS
 
 Scenario: Buy Cola

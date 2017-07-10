@@ -3,8 +3,6 @@ package test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static test.jbehave.VendingMachineUtils.defaultCashBox;
-import static test.jbehave.VendingMachineUtils.defaultInventory;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,6 +14,7 @@ import main.Coin;
 import main.Product;
 import main.VendingMachine;
 
+import test.jbehave.VendingMachineUtils;
 
 public class VendingMachineTest {
 
@@ -24,8 +23,8 @@ public class VendingMachineTest {
 	@Before
 	public void setUp(){
 		 testee = new VendingMachine();
-		 testee.setCashBox(defaultCashBox());
-		 testee.setInventory(defaultInventory());
+		 testee.setCashBox(VendingMachineUtils.defaultCashBox());
+		 testee.setInventory(VendingMachineUtils.defaultInventory());
 	}
 
 	@Test

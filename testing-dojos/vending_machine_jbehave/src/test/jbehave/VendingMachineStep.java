@@ -64,7 +64,6 @@ public class VendingMachineStep {
 		machine = new VendingMachine();
 		machine.setInventory(defaultInventory());
 		machine.setCashBox(defaultCashBox());
-		machine.getCashBox().size();
 	}
 
 	@When("the given inventory is $productList")
@@ -119,9 +118,7 @@ public class VendingMachineStep {
 
 	@Then("the chashbox value is $value")
 	public void cashBoxValue(int value) {
-		int cashBoxValue = machine.getCashBox().stream().mapToInt(Coin::getValue).sum();
-
-		Assert.assertEquals(value, cashBoxValue);
+		Assert.assertEquals(value, machine.cashBoxValue());
 	}
 
 	@Then("nothing should be dispensed")

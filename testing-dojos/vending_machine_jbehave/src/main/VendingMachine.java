@@ -18,61 +18,40 @@ public class VendingMachine {
 	private List<Product> inventory = new ArrayList<Product>();
 	private List<Coin> cashBox = new ArrayList<Coin>();
 	private List<Product> productOutput = new ArrayList<>();
-	private int value = 0;
 	private List<Coin> coinsReceived = new ArrayList<>();
+	private List<Coin> validCoins = new ArrayList<Coin>();
+	private int value = 0;
 	private Product selected;
 	private State state = State.INITIAL;
-	private final Coin[] validCoins = new Coin[] { Coin.QUARTER, Coin.DIME, Coin.NICKEL };
+	
+
+	private static enum State {
+		INITIAL, MONEY, PURCHASE, SOLD_OUT, INSUFFICIENT, EXACT_CHANGE;
+	}
+
+	public VendingMachine() {
+		validCoins.add(Coin.QUARTER);
+		validCoins.add(Coin.DIME);
+		validCoins.add(Coin.NICKEL);
+	}
 
 	public void setInventory(List<Product> inventory) {
 		this.inventory = inventory;
 	}
 
-	public List<Product> getInventory() {
-		return inventory;
-	}
-
 	public void setCashBox(List<Coin> cashBox) {
 		this.cashBox = cashBox;
 	}
-
-	private boolean exactChange() {
-		int nickles = Collections.frequency(cashBox, Coin.NICKEL);
-		int dimes = Collections.frequency(cashBox, Coin.DIME);
-
-		// change only needed to return $0.05 and $0.10
-		return (!((nickles >= 2) || (nickles >= 1 && dimes > 0)));
-	}
-
-	public boolean accept(Coin coin) {
-		if (coin.getValue() >= 5) {
-			value += coin.getValue();
-			coinsReceived.add(coin);
-			state = State.MONEY;
-			return true;
-		}
-		coinReturn.add(coin);
-		return false;
-	}
-
-	private String format(int amount) {
-		return "$" + new BigDecimal(amount).setScale(2).divide(new BigDecimal(100));
-	}
-
-	boolean equalCoins(Coin coin, Coin candidate) {
-		return coin.getValue() == candidate.getValue();
-	}
-
+	
 	public int getValue() {
 		return value;
 	}
 
+
 	public String getDisplay() {
 		switch (this.state) {
 		case INITIAL:
-			return exactChange() ? EXACT_CHANGE : INSERT;
-		case EXACT_CHANGE:
-			return EXACT_CHANGE;
+			return isExactChange() ? EXACT_CHANGE : INSERT;
 		case MONEY:
 			return format(value);
 		case SOLD_OUT:
@@ -88,14 +67,35 @@ public class VendingMachine {
 			return ERROR;
 		}
 	}
-
+	
 	public List<Coin> getCoinReturn() {
 		List<Coin> result = coinReturn;
 		this.coinReturn = new ArrayList<>();
 		return result;
 	}
 
-	// insert(25)*3 => 0.75; purchase(0.65), collect(0.75), return(10);
+	public boolean accept(Coin coin) {
+		if (validCoins.indexOf(coin) >= 0) {
+			value += coin.getValue();
+			coinsReceived.add(coin);
+			state = State.MONEY;
+			return true;
+		}
+		coinReturn.add(coin);
+		return false;
+	}
+
+	private String format(int amount) {
+		return "$" + new BigDecimal(amount).setScale(2).divide(new BigDecimal(100));
+	}
+
+	// if machine can not return 0.05 or 0.10 (dime or two nickel)
+	private boolean isExactChange() {
+		int nickles = Collections.frequency(cashBox, Coin.NICKEL);
+		int dimes = Collections.frequency(cashBox, Coin.DIME);
+
+		return (!((nickles >= 2) || (nickles >= 1 && dimes > 0)));
+	}
 
 	public void selectProduct(Product p) {
 		if (!inventory.contains(p)) {
@@ -108,7 +108,6 @@ public class VendingMachine {
 			this.productOutput.add(p);
 			int change = collectCoins(p.getPrice());
 			returnChange(change);
-			this.value = 0;
 			this.state = State.PURCHASE;
 		} else {
 			this.selected = p;
@@ -126,6 +125,7 @@ public class VendingMachine {
 		// move rest of received coins to return
 		coinReturn.addAll(coinsReceived);
 		coinsReceived.clear();
+		this.value = 0;
 
 		// return change value
 		return -value;
@@ -140,28 +140,22 @@ public class VendingMachine {
 					break;
 				}
 			}
-
 		}
+	}
+
+	public void returnCoins() {
+		collectCoins(0);
+		this.state = State.INITIAL;
 	}
 
 	public List<Product> getProductOutput() {
 		List<Product> result = productOutput;
 		this.productOutput = new ArrayList<>();
 		return result;
+
 	}
 
-	private static enum State {
-		INITIAL, MONEY, PURCHASE, SOLD_OUT, INSUFFICIENT, EXACT_CHANGE;
-	}
-
-	public void returnCoins() {
-		this.coinReturn.addAll(this.coinsReceived);
-		this.value = 0;
-		this.state = State.INITIAL;
-		this.coinsReceived.clear();
-	}
-
-	public List<Coin> getCashBox() {
-		return cashBox;
+	public int cashBoxValue() {
+		return cashBox.stream().mapToInt(Coin::getValue).sum();
 	}
 }

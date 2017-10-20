@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio for Mac
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodingDojo", "CodingDojo.csproj", "{E3B5A339-1661-9A53-A61C-52838C5F12BB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E3B5A339-1661-9A53-A61C-52838C5F12BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3B5A339-1661-9A53-A61C-52838C5F12BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3B5A339-1661-9A53-A61C-52838C5F12BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3B5A339-1661-9A53-A61C-52838C5F12BB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
